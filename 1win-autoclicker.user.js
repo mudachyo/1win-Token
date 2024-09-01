@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         1win Autoclicker
-// @version      1.0
+// @version      1.1
 // @namespace    Violentmonkey Scripts
 // @author       mudachyo
 // @match        https://cryptocklicker-frontend-rnd-prod.100hp.app/*
 // @grant        none
-// @icon         https://cdn.prod.website-files.com/65b6a1a4a0e2af577bccce96/65ba99c1616e21b24009b86c_blum-256.png
+// @icon         https://cryptocklicker-frontend-rnd-prod.100hp.app/images/common/Coin.webp
 // @downloadURL  https://github.com/mudachyo/1win-Token/raw/main/1win-autoclicker.user.js
 // @updateURL    https://github.com/mudachyo/1win-Token/raw/main/1win-autoclicker.user.js
 // @homepage     https://github.com/mudachyo/1win-Token/
