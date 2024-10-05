@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         1win Autoclicker
-// @version      1.2
+// @version      1.3
 // @namespace    Violentmonkey Scripts
 // @author       mudachyo
 // @match        https://cryptocklicker-frontend-rnd-prod.100hp.app/*
@@ -18,12 +18,12 @@ function getRandomInt(min, max) {
 }
 
 function getCurrentEnergy() {
-    const energyElement = document.querySelector('#root > div._wrapper_1cplp_1 > div > footer > div._info_16i6o_10._footerInfo_16i6o_41 > div > div > div > div > span:nth-child(1)');
+    const energyElement = document.evaluate('//*[@id="root"]/div[1]/div/footer/div[1]/div/div/div/div/span[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
     return energyElement ? parseInt(energyElement.textContent.replace(/\s/g, '').trim()) : 0;
 }
 
 function findClickerElement() {
-    return document.querySelector('img#coin._coin_24iid_65');
+    return document.querySelector('#coin');
 }
 
 function autoclicker() {
