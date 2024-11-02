@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         1win Autoclicker
-// @version      1.3
+// @version      1.4
 // @namespace    Violentmonkey Scripts
 // @author       mudachyo
 // @match        https://cryptocklicker-frontend-rnd-prod.100hp.app/*
@@ -18,8 +18,8 @@ function getRandomInt(min, max) {
 }
 
 function getCurrentEnergy() {
-    const energyElement = document.evaluate('//*[@id="root"]/div[1]/div/footer/div[1]/div/div/div/div/span[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-    return energyElement ? parseInt(energyElement.textContent.replace(/\s/g, '').trim()) : 0;
+    const energyElement = document.querySelector('span[class*="_energyText_"]');
+    return energyElement ? parseInt(energyElement.textContent.replace(/[^\d]/g, '')) : 0;
 }
 
 function findClickerElement() {
@@ -37,14 +37,18 @@ function autoclicker() {
             setTimeout(autoclicker, pauseDuration);
         } else {
             const coordinates = getRandomCoordinates(element);
+            const pointerId = Math.floor(Math.random() * 100);
 
-            triggerEvent(element, 'pointerdown', coordinates);
-            triggerEvent(element, 'mousedown', coordinates);
-            triggerEvent(element, 'pointermove', coordinates);
-            triggerEvent(element, 'mousemove', coordinates);
-            triggerEvent(element, 'pointerup', coordinates);
-            triggerEvent(element, 'mouseup', coordinates);
-            triggerEvent(element, 'click', coordinates);
+            triggerPointerEvent(element, 'pointerover', coordinates, pointerId);
+            triggerPointerEvent(element, 'pointerenter', coordinates, pointerId);
+            triggerPointerEvent(element, 'pointerdown', coordinates, pointerId);
+            triggerTouchEvent(element, 'touchstart', coordinates);
+            triggerPointerEvent(element, 'gotpointercapture', coordinates, pointerId);
+            triggerPointerEvent(element, 'pointerup', coordinates, pointerId);
+            triggerPointerEvent(element, 'lostpointercapture', coordinates, pointerId);
+            triggerPointerEvent(element, 'pointerout', coordinates, pointerId);
+            triggerPointerEvent(element, 'pointerleave', coordinates, pointerId);
+            triggerTouchEvent(element, 'touchend', coordinates);
 
             const randomDelay = getRandomInt(40, 130);
             setTimeout(autoclicker, randomDelay);
@@ -54,25 +58,60 @@ function autoclicker() {
     }
 }
 
-function triggerEvent(element, eventType, coordinates) {
-    const event = new MouseEvent(eventType, {
-        view: window,
+function triggerPointerEvent(element, eventType, coordinates, pointerId) {
+    const event = new PointerEvent(eventType, {
         bubbles: true,
         cancelable: true,
+        view: window,
         clientX: coordinates.x,
         clientY: coordinates.y,
         screenX: coordinates.x + window.screenX,
         screenY: coordinates.y + window.screenY,
+        pointerId: pointerId,
+        width: eventType.includes('down') ? 23 : 1,
+        height: eventType.includes('down') ? 23 : 1,
+        pressure: eventType.includes('down') ? 1 : 0,
+        isTrusted: true
     });
 
     element.dispatchEvent(event);
+}
+
+function triggerTouchEvent(element, eventType, coordinates) {
+    const touch = new Touch({
+        identifier: Math.floor(Math.random() * 100),
+        target: element,
+        clientX: coordinates.x,
+        clientY: coordinates.y,
+        screenX: coordinates.x + window.screenX,
+        screenY: coordinates.y + window.screenY,
+        radiusX: 11.5,
+        radiusY: 11.5,
+        rotationAngle: 0,
+        force: 1
+    });
+
+    const touchEvent = new TouchEvent(eventType, {
+        bubbles: true,
+        cancelable: true,
+        view: window,
+        touches: eventType === 'touchend' ? [] : [touch],
+        targetTouches: eventType === 'touchend' ? [] : [touch],
+        changedTouches: [touch],
+        isTrusted: true
+    });
+
+    element.dispatchEvent(touchEvent);
 }
 
 function getRandomCoordinates(element) {
     const rect = element.getBoundingClientRect();
     const x = getRandomInt(rect.left, rect.right);
     const y = getRandomInt(rect.top, rect.bottom);
-    return { x, y };
+    return {
+        x,
+        y
+    };
 }
 
 console.log('1win Autoclicker: Автокликер запущен');
